@@ -1,4 +1,3 @@
-// Calculate total distance between both lists
 use log::{debug, info};
 use advent_of_code::helpers;
 

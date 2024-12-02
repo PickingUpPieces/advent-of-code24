@@ -5,6 +5,7 @@ use advent_of_code::helpers;
 fn main() {
     helpers::init();
     info!("Start day 1 challenge...");
+    info!("Calculate distance score...");
 
     // Read Input 
     let file_path = "src/day01/input.txt";
@@ -12,12 +13,13 @@ fn main() {
     let (mut list1, mut list2) = parse_lists(file_content).unwrap();
 
     assert_eq!(list1.len(), list2.len());
-    debug!("{:?}", list1);
-    debug!("{:?}", list2);
 
     // Sort both lists
     quick_sort(&mut list1);
     quick_sort(&mut list2);
+
+    debug!("{:?}", list1);
+    debug!("{:?}", list2);
 
     let mut distance = 0;
 
@@ -26,8 +28,38 @@ fn main() {
     }
 
     info!("The distance between both lists is {}", distance);
-    // TODO: Calculate total distance between entries
-    // TODO: Add up distance
+    info!("Calculate similarity score...");
+
+    let mut similarity = 0;
+    let (mut pointer1, mut pointer2) = (0, 0);
+
+    while pointer1 < list1.len() {
+        if pointer2 >= list2.len() {
+            // List 2 already at its end, so all other similarity scores are 0
+            break;
+        }
+
+        let element1 = list1[pointer1];
+        let element2 = list2[pointer2];
+
+        if element1 < element2 {
+            pointer1 += 1;
+        } else if element1 == element2 {
+            // Count amount of elements in list2
+            let mut occurences = 0;
+            while pointer2 + occurences < list2.len() && list2[pointer2 + occurences] == element2 {
+                occurences += 1;
+            }
+            similarity += element1 * occurences as u64;
+            pointer2 += occurences;
+            pointer1 += 1;
+        } else {
+            // element2 is smaller
+            pointer2 += 1;
+        }
+    }
+
+    info!("Similarity score is {similarity}")
 }
 
 

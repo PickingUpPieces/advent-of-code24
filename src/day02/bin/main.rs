@@ -8,7 +8,6 @@ use advent_of_code::helpers;
 fn main() {
     helpers::init();
     info!("Start day 2 challenge...");
-
     let mut reports = Vec::with_capacity(2000);
 
     // Parse the input
@@ -19,7 +18,6 @@ fn main() {
         }
         reports.push(report);
     }
-
     info!("Total amount of reports: {}", reports.len());
 
     // Check monotonicity
@@ -28,9 +26,7 @@ fn main() {
     for report in reports.clone() {
         amount_safe_reports += check_sequence_validity(report, false);
     }
-
     info!("Amount of safe reports: {amount_safe_reports}");
-
 
     info!("Calculate problem 2...");
     amount_safe_reports = 0;
@@ -45,7 +41,6 @@ fn main() {
 
 fn check_sequence_validity(report: Vec<usize>, tolerate_one_bad_window: bool) -> usize {
     let mut increasing: Option<bool> = None;
-
 
     for (index, window) in report.windows(2).enumerate() {
         let diff = window[1] as i64 - window[0] as i64;
@@ -77,6 +72,8 @@ fn check_sequence_validity(report: Vec<usize>, tolerate_one_bad_window: bool) ->
     return 1;
 }
 
+
+// Just brute force by removing every element once and check if it is a safe version
 fn brute_all_windows(report: Vec<usize>) -> usize {
     // Remove all elements once and try if there is a safe version of the report
     for (index, _) in report.iter().enumerate() {

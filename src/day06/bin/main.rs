@@ -43,7 +43,7 @@ fn main() {
                     (x,y) 
                 }, 
                 '#' => { 
-                    direction_index = ( direction_index + 1) % 4; 
+                    direction_index = (direction_index + 1) % 4; 
                     direction = DIRECTIONS[direction_index]; 
                     position 
                 },
@@ -67,34 +67,35 @@ fn main() {
         // Set field to wall char '#'
         matrix[field.0][field.1] = '#';
 
-        // seen_fields are (direction, x, y) to uniqly identify which fields already have been visited
-        let mut seen_fields: HashSet<(usize, usize, usize)> = HashSet::new();
-        seen_fields.insert((direction_index, starting_position.0, starting_position.1)); 
-
         // Reset other parameters
         position = starting_position;
         direction_index = 0;
         direction = DIRECTIONS[direction_index]; 
 
+        // seen_fields are (direction, x, y) to uniqly identify which fields already have been visited
+        let mut seen_fields: HashSet<(usize, usize, usize)> = HashSet::new();
+        seen_fields.insert((direction_index, starting_position.0, starting_position.1)); 
+
         loop {
             if let Some((x, y)) = get_new_position(&matrix, position, direction) {
                 position = match matrix[x][y] {
-                    '.' => (x,y), 
+                    '.' => (x,y),
                     '#' => { 
-                        direction_index = ( direction_index + 1) % 4; 
+                        direction_index = (direction_index + 1) % 4; 
                         direction = DIRECTIONS[direction_index]; 
                         position
                     },
                     x => panic!("Unknown char {x} found in matrix")
                 };
+
                 // Check if we already visited this field
                 if seen_fields.get(&(direction_index, position.0, position.1)).is_some() {
                     debug!("Found loop with obstruction in field {:?}", field);
-                    amount_loops.insert((position.0, position.1));
+                    amount_loops.insert(position);
                     break;
                 }
-
                 seen_fields.insert((direction_index, position.0, position.1)); 
+
             } else {
                 break; // About to leave the area
             }

@@ -29,18 +29,18 @@ fn main() {
     info!("Found '^' at position: {:?}", starting_position);
 
     let mut direction_index: usize = 0;
-    let mut direction: (i32, i32) = DIRECTIONS[direction_index];
+    let mut direction = DIRECTIONS[direction_index];
     let mut position = starting_position;
     let mut visited_fields: HashSet<(usize, usize)> = HashSet::new();
     // Add current guard position
     visited_fields.insert(starting_position);
 
     loop {
-        if let Some((x, y)) = get_new_position(&matrix, position, direction) {
-            position = match matrix[x][y] {
+        if let Some((row, col)) = get_new_position(&matrix, position, direction) {
+            position = match matrix[row][col] {
                 '.' => { 
-                    visited_fields.insert((x,y)); 
-                    (x,y) 
+                    visited_fields.insert((row,col)); 
+                    (row,col) 
                 }, 
                 '#' => { 
                     direction_index = (direction_index + 1) % 4; 
@@ -72,20 +72,20 @@ fn main() {
         direction_index = 0;
         direction = DIRECTIONS[direction_index]; 
 
-        // seen_fields are (direction, x, y) to uniqly identify which fields already have been visited
+        // seen_fields are (direction, x, col) to uniqly identify which fields already have been visited
         let mut seen_fields: HashSet<(usize, usize, usize)> = HashSet::new();
         seen_fields.insert((direction_index, starting_position.0, starting_position.1)); 
 
         loop {
-            if let Some((x, y)) = get_new_position(&matrix, position, direction) {
-                position = match matrix[x][y] {
-                    '.' => (x,y),
+            if let Some((row, col)) = get_new_position(&matrix, position, direction) {
+                position = match matrix[row][col] {
+                    '.' => (row,col),
                     '#' => { 
                         direction_index = (direction_index + 1) % 4; 
                         direction = DIRECTIONS[direction_index]; 
                         position
                     },
-                    x => panic!("Unknown char {x} found in matrix")
+                    _ => panic!("Unknown char found in matrix")
                 };
 
                 // Check if we already visited this field
@@ -95,7 +95,6 @@ fn main() {
                     break;
                 }
                 seen_fields.insert((direction_index, position.0, position.1)); 
-
             } else {
                 break; // About to leave the area
             }

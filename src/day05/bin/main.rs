@@ -1,4 +1,4 @@
-use std::{collections::{HashMap, HashSet}, ops::Index};
+use std::collections::{HashMap, HashSet};
 
 use log::{debug, info};
 use advent_of_code::helpers;

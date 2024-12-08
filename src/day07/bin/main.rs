@@ -1,5 +1,4 @@
 use std::collections::VecDeque;
-
 use log::{debug, info};
 use advent_of_code::helpers;
 
@@ -24,7 +23,9 @@ fn main() {
     
     let operations = parse();
     debug!("Amount of operations: {}", operations.len());
+
     let mut result = 0;
+    let mut amount_true_equations = 0;
 
     // Iterate over operations
     'outer: for mut operation in operations {
@@ -33,20 +34,21 @@ fn main() {
         while let Some((acc, mut operation)) = graph.pop() {
             if operation.result == acc {
                 result += acc;
+                amount_true_equations += 1;
                 continue 'outer;
+            } else if operation.result < acc || operation.numbers.is_empty() { 
+                continue;
             }
 
-            if !operation.numbers.is_empty() {
-                let next_number = operation.numbers.pop_front().unwrap();
-                graph.push((acc * next_number, operation.clone()));
-                graph.push((acc + next_number, operation));
-            }
+            let next_number = operation.numbers.pop_front().unwrap();
+            graph.push((acc * next_number, operation.clone()));
+            graph.push((acc + next_number, operation.clone()));
         }
     }
 
-    info!("Amount of equation results: {result}");
+    info!("Amount of true equation: {amount_true_equations}");
+    info!("Sum of true equation results: {result}");
 }
-
 
 fn parse() -> Vec<Operation> {
     let mut operations = Vec::new();

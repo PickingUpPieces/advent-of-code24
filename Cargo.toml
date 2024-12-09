@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 atoi = "2.0.0"
 env_logger = "0.11.5"
+itertools = "0.13.0"
 log = "0.4.22"
 regex = "1.11.1"
 
@@ -39,3 +40,7 @@ path = "src/day06/bin/main.rs"
 [[bin]]
 name = "day07"
 path = "src/day07/bin/main.rs"
+
+[[bin]]
+name = "day08"
+path = "src/day08/bin/main.rs"

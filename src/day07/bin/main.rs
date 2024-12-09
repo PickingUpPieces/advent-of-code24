@@ -43,9 +43,11 @@ fn main() {
             let next_number = operation.numbers.pop_front().unwrap();
             graph.push((acc * next_number, operation.clone()));
             graph.push((acc + next_number, operation.clone()));
+            graph.push((concat(acc, next_number), operation));
         }
     }
 
+    // 169122157276284 is too high
     info!("Amount of true equation: {amount_true_equations}");
     info!("Sum of true equation results: {result}");
 }
@@ -69,4 +71,8 @@ fn parse() -> Vec<Operation> {
         operations.push(operation);
     }
     operations
+}
+
+fn concat(a: usize, b: usize) -> usize {
+    a * 10usize.pow(b.ilog10() + 1) + b
 }

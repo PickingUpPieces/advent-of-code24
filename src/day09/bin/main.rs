@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 use advent_of_code::helpers;
 use log::{debug, info};
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 struct File {
     id: usize, 
     starting_position: usize,
@@ -12,10 +12,16 @@ struct File {
 fn main() {
     helpers::init();
     info!("Start day 9 challenge...");
-    let mut checksum = 0;
-    let (mut files, mut free_space) = parse();
-    let mut current_free_space: File = free_space.pop_front().unwrap();
+    let (files, free_space) = parse();
     info!("Got {} files and {} free spaces", files.len(), free_space.len());
+
+    info!("Checksum for PART ONE is {}", part_one(files.clone(), free_space.clone()));
+    info!("Checksum for PART TWO is {}", part_two(files, free_space));
+}
+
+fn part_one(mut files: Vec<File>, mut free_space: VecDeque<File>) -> usize {
+    let mut checksum = 0;
+    let mut current_free_space: File = free_space.pop_front().unwrap();
 
     // Iterate over files from last to first
     for file in files.iter_mut().rev() {
@@ -26,7 +32,6 @@ fn main() {
         }
 
         loop {
-            //debug!("File {} with starting position {} and length {}", file.id, file.starting_position, file.length);
             if current_free_space.length <= file.length {
                 debug!("Moving {} units of file {} to free space starting at {}", current_free_space.length, file.id, current_free_space.starting_position);
                 file.length -= current_free_space.length;
@@ -43,7 +48,27 @@ fn main() {
             }
         }
     }
-    info!("Checksum is {checksum}");
+    checksum
+}
+
+fn part_two(mut files: Vec<File>, mut free_space: VecDeque<File>) -> usize {
+    let mut checksum = 0;
+    // Iterate over files from last to first
+    'outer: for file in files.iter_mut().rev() {
+        for (index, space) in free_space.iter().enumerate() {
+            if space.starting_position > file.starting_position { 
+                // File could not be moved due to lack of free space
+                checksum += calc_checksum(file.starting_position, file.length, file.id);
+                continue 'outer
+            } else if space.length >= file.length {
+                checksum += calc_checksum(space.starting_position, file.length, file.id);
+                free_space[index].starting_position += file.length;
+                free_space[index].length -= file.length;
+                continue 'outer
+            }
+        }
+    }
+    checksum
 }
 
 fn parse() -> (Vec<File>, VecDeque<File>) {

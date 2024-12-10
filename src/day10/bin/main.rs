@@ -8,15 +8,14 @@ fn main() {
     helpers::init();
     info!("Start day 10 challenge...");
 
-    let map = parse();
-
-    info!("Solution for PART ONE is {}", part_one(map.clone()));
-    info!("Solution for PART TWO is {}", part_two());
+    info!("Solution for PART ONE is {}", solve(false));
+    info!("Solution for PART TWO is {}", solve(true));
 }
 
-fn part_one(map: Vec<Vec<i32>>) -> usize {
+fn solve(part_two: bool) -> usize {
     // A hiking trail is any path that starts at height 0, ends at height 9, and always increases by a height of exactly 1 at each step. Hiking trails never include diagonal steps - only up, down, left, or right (from the perspective of the map).
     // A trailhead is any position that starts one or more hiking trails - here, these positions will always have height 0
+    let map = parse();
     let mut trailheads: Vec<(i32, i32)> = Vec::new(); 
     let mut return_value = 0;
 
@@ -38,7 +37,11 @@ fn part_one(map: Vec<Vec<i32>>) -> usize {
         // Implement DFS to find all legitimate paths
         while let Some((row, col)) = stack.pop() {
             if map[row as usize][col as usize] == 9 { 
-                result.insert((row, col));
+                if part_two {
+                    return_value += 1;
+                } else {
+                    result.insert((row, col));
+                }
                 continue; 
             };
 
@@ -50,16 +53,14 @@ fn part_one(map: Vec<Vec<i32>>) -> usize {
             }
         }
 
-        return_value += result.len();
+        if !part_two {
+            return_value += result.len();
+        }
     }
 
     return_value
 }
 
-fn part_two() -> usize {
-    let result = 0;
-    result 
-}
 
 fn parse() -> Vec<Vec<i32>> {
     // The topographic map indicates the height at each position using a scale from 0 (lowest) to 9 (highest)

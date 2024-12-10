@@ -12,6 +12,11 @@ fn main() {
     let (row_length, col_length, input) = parse();
     debug!("Parsed input with row length {row_length} and col length {col_length}: {:?}", input);
 
+    info!("Total amount of positions PART ONE: {}", part_one(row_length, col_length, input.clone()));
+    info!("Total amount of positions PART TWO: {}", part_two(row_length, col_length, input));
+}
+
+fn part_one(row_length: usize, col_length: usize, input: HashMap<char, Vec<(i32, i32)>>) -> usize {
     let mut result: HashSet<(i32, i32)> = HashSet::new();
 
     for (_, positions) in input.iter() {
@@ -23,9 +28,40 @@ fn main() {
     }
 
     // Filter results to be in bound of the 
-    let result: Vec<&(i32, i32)> = result.iter().filter(|(x, y)| { x >= &0 && x < &(row_length as i32) && y >= &0 && y < &(col_length as i32) }).collect();
+    result.retain(|&pos| in_bounds(pos, row_length, col_length));
+    result.len()
+}
 
-    info!("Total amount of new positions: {}", result.len());
+fn part_two(row_length: usize, col_length: usize, input: HashMap<char, Vec<(i32, i32)>>) -> usize {
+    let mut result: HashSet<(i32, i32)> = HashSet::new();
+
+    for (_, positions) in input.iter() {
+        for (&first, &second) in positions.iter().cartesian_product(positions) {
+            if first == second { continue; }
+            let mut candidate = first;
+            let delta = (second.0 - first.0, second.1 - first.1);
+
+            loop {
+                candidate = (candidate.0 + delta.0, candidate.1 + delta.1);
+                if !in_bounds(candidate, row_length, col_length) { break; }
+                result.insert(candidate);
+            }
+            candidate = second;
+            loop {
+                candidate = (candidate.0 - delta.0, candidate.1 - delta.1);
+                if !in_bounds(candidate, row_length, col_length) { break; }
+                result.insert(candidate);
+            }
+        }
+        // Add positions of antennas as antinodes
+        for &pos in positions {
+            result.insert(pos);
+        }
+    }
+
+    // Filter results to be in bound of the 
+    result.retain(|&pos| in_bounds(pos, row_length, col_length));
+    result.len()
 }
 
 fn parse() -> (usize, usize, HashMap<char, Vec<(i32, i32)>>) {
@@ -43,6 +79,10 @@ fn parse() -> (usize, usize, HashMap<char, Vec<(i32, i32)>>) {
         }
     }
     (row_length, col_length, result)
+}
+
+fn in_bounds(p: (i32, i32), row_length: usize, col_length: usize) -> bool {
+    p.0 >= 0 && p.0 < row_length as i32 && p.1 >= 0 && p.1 < col_length as i32
 }
 
 fn antinode(p1: (i32,i32), p2: (i32,i32)) -> (i32, i32) {

@@ -40,18 +40,22 @@ fn part_one() -> (Vec<Vec<usize>>, usize) {
 }
 
 fn part_two(unsafe_reports: Vec<Vec<usize>>) -> usize {
+    // For each of the incorrectly-ordered updates, use the page ordering rules to put the page numbers in the right order.
     let (_, rules) = parse();
     let mut result: usize = 0;
 
-    // Part 2 looks like topological sort, but just bruting it
-    for mut update in unsafe_reports {
-        loop {
-            if let Some(value) = check_update(&mut update, &rules) {
-                result += value;
-                break;
-            }
-        }
+    // TODO: Parse rules in correct order, NOT reversed
+    // TODO: 
+    // TODO: Create a topological sort over the rules
+
+
+    // TODO: Iterate over unsafe_reports and rearange numbers how they appear in the sort order
+    for update in unsafe_reports {
+        let middle_index = update.len() / 2;
+        result += update[middle_index];
     }
+
+    // Update: 71,24,97,83,42
     result
 }
 
